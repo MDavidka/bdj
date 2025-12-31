@@ -1,0 +1,40 @@
+import './style.css';
+ import { renderHeader } from './components/header';
+ import { renderFooter } from './components/footer';
+ import { renderArticleList } from './components/articleList';
+ import { fetchArticles } from './utils/api';
+ import { Article } from './types/article';
+
+ document.addEventListener('DOMContentLoaded', async () => {
+  const app = document.getElementById('app');
+  if (!app) {
+  console.error('App root element not found');
+  return;
+  }
+
+  // Header
+  const header = renderHeader();
+  app.appendChild(header);
+
+  // Main Content
+  const main = document.createElement('main');
+  main.className = 'container mx-auto px-4 py-8';
+
+  try {
+  const articles: Article[] = await fetchArticles();
+  const articleList = renderArticleList(articles);
+  main.appendChild(articleList);
+  } catch (error) {
+  console.error('Failed to fetch articles:', error);
+  const errorElement = document.createElement('div');
+  errorElement.className = 'text-red-500';
+  errorElement.textContent = 'Failed to load articles. Please try again later.';
+  main.appendChild(errorElement);
+  }
+
+  app.appendChild(main);
+
+  // Footer
+  const footer = renderFooter();
+  app.appendChild(footer);
+ });
